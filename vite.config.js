@@ -3,6 +3,7 @@ import { resolve } from 'node:path';
 
 export default defineConfig({
   root: 'src',
+  envDir: '..',
   appType: 'mpa',
   build: {
     outDir: '../dist',
