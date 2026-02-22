@@ -1,7 +1,8 @@
-main {
-  width: min(960px, 100%);
+main.auth-page {
+  max-width: 460px !important;
 }
 
 .auth-shell {
-  max-width: 480px;
+  width: 100%;
+  margin-inline: auto;
 }
