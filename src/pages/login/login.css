@@ -1,0 +1,7 @@
+main {
+  width: min(960px, 100%);
+}
+
+.auth-shell {
+  max-width: 480px;
+}
