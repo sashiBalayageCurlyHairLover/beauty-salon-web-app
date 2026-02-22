@@ -6,7 +6,33 @@
     <title>Beauty Salon | Login</title>
   </head>
   <body class="d-flex flex-column min-vh-100">
-    <div id="header-root"></div>
+    <div id="header-root">
+      <nav class="navbar navbar-expand-lg bg-white border-bottom header-nav" aria-label="Main navigation">
+        <div class="container">
+          <a class="navbar-brand fw-semibold" href="/">Beauty Salon</a>
+          <button
+            class="navbar-toggler"
+            type="button"
+            data-bs-toggle="collapse"
+            data-bs-target="#mainNavbar"
+            aria-controls="mainNavbar"
+            aria-expanded="false"
+            aria-label="Toggle navigation"
+          >
+            <span class="navbar-toggler-icon"></span>
+          </button>
+
+          <div class="collapse navbar-collapse" id="mainNavbar">
+            <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+              <li class="nav-item"><a class="nav-link" href="/">Home</a></li>
+              <li class="nav-item"><a class="nav-link" href="/profile/">Profile</a></li>
+              <li class="nav-item"><a class="nav-link" href="/register/">Register</a></li>
+              <li class="nav-item"><a class="nav-link active" aria-current="page" href="/login/">Login</a></li>
+            </ul>
+          </div>
+        </div>
+      </nav>
+    </div>
 
     <main class="container py-5 auth-page">
       <section class="auth-shell card border-0 shadow-sm p-4">
@@ -31,7 +57,17 @@
       </section>
     </main>
 
-    <div id="footer-root"></div>
+    <div id="footer-root" class="mt-auto">
+      <footer class="border-top bg-white footer-shell">
+        <div class="container py-2 d-flex justify-content-between align-items-center">
+          <small class="text-muted mb-0">© 2026 Beauty Salon</small>
+          <span class="text-muted d-inline-flex align-items-center gap-2">
+            <i class="bi bi-stars"></i>
+            Crafted with Vite
+          </span>
+        </div>
+      </footer>
+    </div>
 
     <script type="module" src="/pages/login/login.js"></script>
   </body>

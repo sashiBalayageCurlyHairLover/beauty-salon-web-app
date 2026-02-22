@@ -22,9 +22,8 @@ async function initPage() {
 			emailElement.textContent = user.email || 'Unknown user';
 		}
 	} catch (error) {
-		if (emailElement) {
-			emailElement.textContent = error.message || 'Unable to load profile.';
-		}
+		window.location.href = '/login/';
+		return;
 	}
 
 	if (logoutButton) {

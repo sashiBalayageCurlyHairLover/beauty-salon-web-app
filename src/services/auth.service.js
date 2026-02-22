@@ -1,12 +1,21 @@
 import { supabase } from './supabase.js';
 
+function getAuthClient() {
+  if (!supabase) {
+    throw new Error('Auth is not configured. Please set VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY.');
+  }
+
+  return supabase;
+}
+
 /**
  * Registers a user with email and password.
  * @param {string} email
  * @param {string} password
  */
 export async function registerUser(email, password) {
-  const { data, error } = await supabase.auth.signUp({ email, password });
+  const authClient = getAuthClient();
+  const { data, error } = await authClient.auth.signUp({ email, password });
 
   if (error) {
     throw error;
@@ -21,7 +30,8 @@ export async function registerUser(email, password) {
  * @param {string} password
  */
 export async function loginUser(email, password) {
-  const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+  const authClient = getAuthClient();
+  const { data, error } = await authClient.auth.signInWithPassword({ email, password });
 
   if (error) {
     throw error;
@@ -34,7 +44,8 @@ export async function loginUser(email, password) {
  * Logs out the current user.
  */
 export async function logoutUser() {
-  const { error } = await supabase.auth.signOut();
+  const authClient = getAuthClient();
+  const { error } = await authClient.auth.signOut();
 
   if (error) {
     throw error;
@@ -45,7 +56,8 @@ export async function logoutUser() {
  * Gets active auth session user.
  */
 export async function getCurrentUser() {
-  const { data, error } = await supabase.auth.getUser();
+  const authClient = getAuthClient();
+  const { data, error } = await authClient.auth.getUser();
 
   if (error) {
     throw error;
