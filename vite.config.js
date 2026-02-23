@@ -1,9 +1,33 @@
 import { defineConfig } from 'vite';
 import { resolve } from 'node:path';
 
+function notFoundFallbackPlugin() {
+  const knownRoutes = new Set(['/', '/profile/', '/login/', '/register/', '/appointment/', '/404.html']);
+
+  return {
+    name: 'not-found-fallback',
+    configureServer(server) {
+      server.middlewares.use((req, _res, next) => {
+        const url = req.url || '/';
+        const pathname = url.split('?')[0] || '/';
+
+        const isAssetRequest = pathname.includes('.') || pathname.startsWith('/@');
+        if (isAssetRequest || knownRoutes.has(pathname)) {
+          next();
+          return;
+        }
+
+        req.url = '/404.html';
+        next();
+      });
+    }
+  };
+}
+
 export default defineConfig({
   root: 'src',
   envDir: '..',
+  plugins: [notFoundFallbackPlugin()],
   appType: 'mpa',
   build: {
     outDir: '../dist',
@@ -14,7 +38,8 @@ export default defineConfig({
         profile: resolve(__dirname, 'src/profile/index.html'),
         login: resolve(__dirname, 'src/login/index.html'),
         register: resolve(__dirname, 'src/register/index.html'),
-        appointment: resolve(__dirname, 'src/appointment/index.html')
+        appointment: resolve(__dirname, 'src/appointment/index.html'),
+        '404': resolve(__dirname, 'src/404.html')
       }
     }
   }

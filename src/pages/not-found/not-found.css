@@ -1,0 +1,8 @@
+main {
+  width: min(960px, 100%);
+}
+
+.not-found-shell {
+  max-width: 560px;
+  margin-inline: auto;
+}
