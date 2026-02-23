@@ -15,8 +15,19 @@ import './profile.css';
 const pageState = {
 	user: null,
 	appointments: [],
-	editingAppointmentId: null
+	editingAppointmentId: null,
+	isFormVisible: false
 };
+
+function setFormVisibility(visible) {
+	const formSection = document.querySelector('#appointment-form-section');
+	if (!formSection) {
+		return;
+	}
+
+	pageState.isFormVisible = visible;
+	formSection.classList.toggle('d-none', !visible);
+}
 
 function setAlert(message, variant = 'danger') {
 	const alertElement = document.querySelector('#appointment-alert');
@@ -26,6 +37,16 @@ function setAlert(message, variant = 'danger') {
 
 	alertElement.className = `alert alert-${variant}`;
 	alertElement.textContent = message;
+}
+
+function clearAlert() {
+	const alertElement = document.querySelector('#appointment-alert');
+	if (!alertElement) {
+		return;
+	}
+
+	alertElement.className = 'alert d-none';
+	alertElement.textContent = '';
 }
 
 function resetAppointmentForm() {
@@ -51,6 +72,7 @@ function resetAppointmentForm() {
 	}
 
 	cancelButton?.classList.add('d-none');
+	clearAlert();
 }
 
 function formatAppointmentLabel(appointment) {
@@ -192,6 +214,8 @@ function startEditingAppointment(appointmentId) {
 	}
 
 	cancelButton?.classList.remove('d-none');
+	setFormVisibility(true);
+	document.querySelector('#appointment-form-section')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
 }
 
 async function hydrateFormOptions() {
@@ -218,6 +242,13 @@ function wireAppointmentActions() {
 	const submitButton = document.querySelector('#appointment-submit');
 	const cancelEditButton = document.querySelector('#appointment-cancel-edit');
 	const listElement = document.querySelector('#appointments-list');
+	const openCreateButton = document.querySelector('#open-create-appointment');
+
+	openCreateButton?.addEventListener('click', () => {
+		resetAppointmentForm();
+		setFormVisibility(true);
+		document.querySelector('#appointment-form-section')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+	});
 
 	form?.addEventListener('submit', async (event) => {
 		event.preventDefault();
@@ -240,6 +271,9 @@ function wireAppointmentActions() {
 			}
 
 			resetAppointmentForm();
+			if (!pageState.editingAppointmentId) {
+				setFormVisibility(false);
+			}
 			await refreshAppointments();
 		} catch (error) {
 			setAlert(error.message || 'Failed to save appointment.');
@@ -250,6 +284,7 @@ function wireAppointmentActions() {
 
 	cancelEditButton?.addEventListener('click', () => {
 		resetAppointmentForm();
+		setFormVisibility(false);
 	});
 
 	listElement?.addEventListener('click', async (event) => {

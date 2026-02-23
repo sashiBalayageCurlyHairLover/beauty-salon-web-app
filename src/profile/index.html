@@ -41,12 +41,13 @@
         <p id="profile-email" class="fs-5 mb-3">Loading...</p>
         <p class="mb-4">Your appointments: <strong id="appointments-count">0</strong></p>
         <div class="d-flex gap-2 flex-wrap">
+          <button id="open-create-appointment" class="btn btn-outline-dark" type="button">Create Appointment</button>
           <button id="logout-btn" class="btn btn-dark" type="button">Logout</button>
           <a class="btn btn-outline-dark" href="/">Back to Home</a>
         </div>
       </section>
 
-      <section class="card border-0 shadow-sm p-4 mb-4">
+      <section id="appointment-form-section" class="card border-0 shadow-sm p-4 mb-4 d-none">
         <h2 class="h4 mb-3" id="appointment-form-title">Create Appointment</h2>
         <div id="appointment-alert" class="alert d-none" role="alert"></div>
 
