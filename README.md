@@ -1,112 +1,137 @@
 # Beauty Salon Web App
 
-Multi-page Beauty Salon web app built with Vite + vanilla JavaScript + Supabase Auth/DB.
+Beauty Salon is a multi-page web app for clients and admins.
 
-## Features Implemented
+- Clients can register/login, view suggested services and prices, create/edit/delete appointments, upload appointment attachments, and manage profile data.
+- Admin users can access a protected admin panel to list/view/edit/delete appointments and list/view/edit/delete users.
 
-- Supabase email/password authentication (`register`, `login`, `logout`)
-- Auth-aware navigation and homepage actions
-- Protected profile page for authenticated users
-- User-specific appointments module:
-	- Appointments list page (with count)
-	- Separate create page
-	- Separate edit page
-	- Details page per appointment
-	- Delete action from list page
-- Success toast notifications after create/edit
-- Custom 404 page for unknown routes
-- Supabase migration and local migration SQL tracking
-- Seed scripts for users, appointments, and reference data
+## Project Description
 
-## Current Routes
+The app helps a salon team and clients work from one place:
 
-- `/` → Home
-- `/login/` → Login
-- `/register/` → Register
-- `/profile/` → Profile (auth required)
-- `/appointments/` → My appointments list (auth required)
-- `/appointments/create/` → Create appointment (auth required)
-- `/appointments/edit/?id=<appointment_id>` → Edit appointment (auth required)
-- `/appointment/?id=<appointment_id>` → Appointment details (auth required)
-- Unknown routes → custom `404` page
+- **Public visitors** can access Home, About, and Contact pages.
+- **Authenticated clients** can manage their own appointments and view service pricing.
+- **Authenticated admins** can manage appointments and users through dedicated admin pages.
 
-## Tech Stack
+Core security is enforced using Supabase RLS policies (not only client-side checks).
 
-- Vite (MPA)
-- Vanilla JavaScript (ES modules)
-- Bootstrap 5 + Bootstrap Icons
-- Supabase (`@supabase/supabase-js`)
+## Architecture
 
-## Environment Variables
+### Front-end
 
-Create a `.env` file in project root (template available in `.env.example`):
+- **Framework**: Vite (MPA mode)
+- **Language**: Vanilla JavaScript (ES Modules)
+- **UI**: Bootstrap 5 + Bootstrap Icons
+- **Pattern**: Reusable shared components (header, footer, appointment editor, toast)
+
+### Back-end
+
+- **Platform**: Supabase
+- **Auth**: Email/password authentication
+- **Database**: PostgreSQL with Row-Level Security policies
+- **Storage**: Private/public buckets (including appointment attachments)
+
+### Technologies Used
+
+- `vite`
+- `@supabase/supabase-js`
+- `bootstrap`
+- `bootstrap-icons`
+
+## Database Schema Design
+
+Main tables and relationships:
+
+```mermaid
+erDiagram
+	AUTH_USERS ||--|| PROFILES : has
+	AUTH_USERS ||--|| USER_ROLES : has
+	AUTH_USERS ||--o{ APPOINTMENTS : books
+	AUTH_USERS ||--o{ GALLERY : uploads
+	AUTH_USERS ||--o{ APPOINTMENT_ATTACHMENTS : uploads
+
+	CATEGORIES ||--o{ SERVICES : groups
+	SERVICES ||--o{ APPOINTMENTS : selected_for
+	STAFF ||--o{ APPOINTMENTS : assigned_to
+	APPOINTMENTS ||--o{ APPOINTMENT_ATTACHMENTS : has
+```
+
+Key domain tables:
+
+- `profiles`, `user_roles`, `app_users`
+- `categories`, `services`, `staff`
+- `appointments`, `appointment_attachments`
+- `gallery`
+
+Migrations are versioned under `supabase/migrations/`:
+
+- `20260221000000_initial_schema_with_rls.sql`
+- `20260303120000_appointment_attachments_storage_rls.sql`
+- `20260303133000_admin_users_panel_support.sql`
+
+## Local Development Setup
+
+### 1) Prerequisites
+
+- Node.js 18+
+- npm
+- Supabase project (URL + anon key)
+
+### 2) Install dependencies
+
+```bash
+npm install
+```
+
+### 3) Configure environment variables
+
+Create `.env` in project root:
 
 ```env
 VITE_SUPABASE_URL=https://your-project-ref.supabase.co
 VITE_SUPABASE_ANON_KEY=your-anon-key
 ```
 
-## Scripts
+### 4) Run app
 
 ```bash
-npm run dev          # start dev server
-npm run build        # production build
-npm run preview      # preview production build
-npm run seed:sample  # create sample auth users + one appointment each
-npm run seed:reference # seed categories/services/staff and link appointments
+npm run dev
 ```
 
-## Seed Script Environment Variables
+### 5) Build for production
 
-For `seed:sample`:
-
-```env
-SUPABASE_URL=...
-SUPABASE_ANON_KEY=...
+```bash
+npm run build
+npm run preview
 ```
 
-For `seed:reference` (either option):
+### Optional: Seed sample data
 
-- Option A:
-
-```env
-SUPABASE_URL=...
-SUPABASE_SERVICE_ROLE_KEY=...
+```bash
+npm run seed:sample
+npm run seed:reference
 ```
 
-- Option B:
+## Key Folders and Files
 
-```env
-SUPABASE_URL=...
-SUPABASE_ANON_KEY=...
-SUPABASE_ADMIN_EMAIL=...
-SUPABASE_ADMIN_PASSWORD=...
+- `src/` — front-end source (all routes/pages/components)
+- `src/components/` — shared UI components (`header`, `footer`, `toast`, `appointment-editor`)
+- `src/pages/` — page logic and styles per route
+- `src/services/` — Supabase access and business logic (`auth`, `appointments`, `admin`, `attachments`)
+- `src/utils/auth.guard.js` — auth/admin route protection helpers
+- `src/admin/` — admin HTML routes (dashboard, users, appointments)
+- `src/appointments/`, `src/appointment/`, `src/profile/` — authenticated client flows
+- `supabase/migrations/` — SQL schema and RLS migrations
+- `scripts/` — data seeding scripts
+- `vite.config.js` — MPA route inputs + dev 404 fallback behavior
+- `package.json` — scripts and dependencies
+
+## Available Scripts
+
+```bash
+npm run dev
+npm run build
+npm run preview
+npm run seed:sample
+npm run seed:reference
 ```
-
-## Database
-
-Schema and RLS are applied for:
-
-- `profiles`
-- `user_roles`
-- `categories`
-- `services`
-- `staff`
-- `appointments`
-- `gallery`
-
-Key policy behavior:
-
-- Public read for catalog/gallery tables
-- Users can access only their own appointments/profile
-- Admin role has elevated write access via RLS policies
-
-Local SQL migration files are under:
-
-- `supabase/migrations/`
-
-## Notes
-
-- Vite is configured as MPA in `vite.config.js`.
-- Unknown dev routes are redirected to `404.html` by a Vite middleware plugin.
-- Header/footer are shared components rendered on all pages.
