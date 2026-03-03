@@ -1,7 +1,7 @@
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap-icons/font/bootstrap-icons.css';
 import 'bootstrap';
-import { getCurrentUser, logoutUser } from '../../services/auth.service.js';
+import { getCurrentUser, getUserRole, logoutUser } from '../../services/auth.service.js';
 import headerTemplate from './header.html?raw';
 import './header.css';
 
@@ -18,6 +18,7 @@ const normalizePath = (pathname) => {
 };
 
 async function syncAuthActions(mountElement) {
+  const adminItem = mountElement.querySelector('#nav-admin-item');
   const registerItem = mountElement.querySelector('#nav-register-item');
   const loginItem = mountElement.querySelector('#nav-login-item');
   const logoutItem = mountElement.querySelector('#nav-logout-item');
@@ -32,6 +33,20 @@ async function syncAuthActions(mountElement) {
   }
 
   const isAuthenticated = Boolean(user);
+  let isAdmin = false;
+
+  if (isAuthenticated) {
+    try {
+      const role = await getUserRole(user.id);
+      isAdmin = role === 'admin';
+    } catch {
+      isAdmin = false;
+    }
+  }
+
+  if (adminItem) {
+    adminItem.classList.toggle('d-none', !isAdmin);
+  }
 
   if (registerItem) {
     registerItem.classList.toggle('d-none', isAuthenticated);

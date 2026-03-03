@@ -21,6 +21,23 @@ export async function registerUser(email, password) {
     throw error;
   }
 
+  const userId = data.user?.id;
+
+  if (userId) {
+    const { error: profileError } = await authClient.from('profiles').upsert({ id: userId }, { onConflict: 'id' });
+    if (profileError) {
+      throw profileError;
+    }
+
+    const { error: roleError } = await authClient
+      .from('user_roles')
+      .upsert({ user_id: userId, role: 'client' }, { onConflict: 'user_id' });
+
+    if (roleError) {
+      throw roleError;
+    }
+  }
+
   return data;
 }
 
@@ -64,4 +81,48 @@ export async function getCurrentUser() {
   }
 
   return data.user;
+}
+
+/**
+ * Gets role for a given user id.
+ * @param {string} userId
+ */
+export async function getUserRole(userId) {
+  if (!userId) {
+    return null;
+  }
+
+  const authClient = getAuthClient();
+  const { data, error } = await authClient
+    .from('user_roles')
+    .select('role')
+    .eq('user_id', userId)
+    .maybeSingle();
+
+  if (error) {
+    throw error;
+  }
+
+  return data?.role || null;
+}
+
+/**
+ * Gets current authenticated user's role.
+ */
+export async function getCurrentUserRole() {
+  const user = await getCurrentUser();
+
+  if (!user) {
+    return null;
+  }
+
+  return getUserRole(user.id);
+}
+
+/**
+ * Indicates whether current user is an admin.
+ */
+export async function isCurrentUserAdmin() {
+  const role = await getCurrentUserRole();
+  return role === 'admin';
 }
