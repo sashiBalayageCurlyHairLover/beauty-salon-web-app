@@ -4,6 +4,8 @@ import { resolve } from 'node:path';
 function notFoundFallbackPlugin() {
   const knownRoutes = new Set([
     '/',
+    '/about/',
+    '/contact/',
     '/profile/',
     '/login/',
     '/register/',
@@ -52,6 +54,8 @@ export default defineConfig({
     rollupOptions: {
       input: {
         index: resolve(__dirname, 'src/index.html'),
+        about: resolve(__dirname, 'src/about/index.html'),
+        contact: resolve(__dirname, 'src/contact/index.html'),
         profile: resolve(__dirname, 'src/profile/index.html'),
         login: resolve(__dirname, 'src/login/index.html'),
         register: resolve(__dirname, 'src/register/index.html'),
