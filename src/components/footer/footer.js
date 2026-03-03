@@ -1,3 +1,4 @@
+import footerTemplate from './footer.html?raw';
 import './footer.css';
 
 /**
@@ -11,7 +12,5 @@ export async function renderFooter(targetSelector = '#footer-root') {
     return;
   }
 
-  const response = await fetch('/components/footer/footer.html');
-  const template = await response.text();
-  mountElement.innerHTML = template;
+  mountElement.innerHTML = footerTemplate;
 }

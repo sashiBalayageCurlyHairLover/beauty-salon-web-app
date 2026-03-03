@@ -2,6 +2,7 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap-icons/font/bootstrap-icons.css';
 import 'bootstrap';
 import { getCurrentUser, logoutUser } from '../../services/auth.service.js';
+import headerTemplate from './header.html?raw';
 import './header.css';
 
 const normalizePath = (pathname) => {
@@ -68,9 +69,7 @@ export async function renderHeader(targetSelector = '#header-root') {
     return;
   }
 
-  const response = await fetch('/components/header/header.html');
-  const template = await response.text();
-  mountElement.innerHTML = template;
+  mountElement.innerHTML = headerTemplate;
 
   const currentPath = normalizePath(window.location.pathname);
   const navLinks = mountElement.querySelectorAll('[data-route]');
