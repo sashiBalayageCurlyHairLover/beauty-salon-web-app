@@ -1,0 +1,31 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Beauty Salon | My Appointments</title>
+  </head>
+  <body class="d-flex flex-column min-vh-100">
+    <div id="header-root"></div>
+
+    <main class="container py-5">
+      <section class="card border-0 shadow-sm p-4 mb-4">
+        <h1 class="h3 mb-3">My Appointments</h1>
+        <p class="mb-4">Total appointments: <strong id="appointments-count">0</strong></p>
+        <div class="d-flex gap-2 flex-wrap">
+          <a class="btn btn-dark" href="/appointments/create/">Create Appointment</a>
+          <a class="btn btn-outline-dark" href="/profile/">Back to Profile</a>
+        </div>
+      </section>
+
+      <section class="card border-0 shadow-sm p-4">
+        <div id="appointments-alert" class="alert d-none" role="alert"></div>
+        <div id="appointments-list" class="d-grid gap-3"></div>
+      </section>
+    </main>
+
+    <div id="footer-root" class="mt-auto"></div>
+
+    <script type="module" src="/pages/appointments/list.js"></script>
+  </body>
+</html>

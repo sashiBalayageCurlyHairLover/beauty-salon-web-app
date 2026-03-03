@@ -2,7 +2,17 @@ import { defineConfig } from 'vite';
 import { resolve } from 'node:path';
 
 function notFoundFallbackPlugin() {
-  const knownRoutes = new Set(['/', '/profile/', '/login/', '/register/', '/appointment/', '/404.html']);
+  const knownRoutes = new Set([
+    '/',
+    '/profile/',
+    '/login/',
+    '/register/',
+    '/appointment/',
+    '/appointments/',
+    '/appointments/create/',
+    '/appointments/edit/',
+    '/404.html'
+  ]);
 
   return {
     name: 'not-found-fallback',
@@ -39,6 +49,9 @@ export default defineConfig({
         login: resolve(__dirname, 'src/login/index.html'),
         register: resolve(__dirname, 'src/register/index.html'),
         appointment: resolve(__dirname, 'src/appointment/index.html'),
+        appointments: resolve(__dirname, 'src/appointments/index.html'),
+        appointmentsCreate: resolve(__dirname, 'src/appointments/create/index.html'),
+        appointmentsEdit: resolve(__dirname, 'src/appointments/edit/index.html'),
         '404': resolve(__dirname, 'src/404.html')
       }
     }

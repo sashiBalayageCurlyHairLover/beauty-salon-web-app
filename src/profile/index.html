@@ -41,71 +41,10 @@
         <p id="profile-email" class="fs-5 mb-3">Loading...</p>
         <p class="mb-4">Your appointments: <strong id="appointments-count">0</strong></p>
         <div class="d-flex gap-2 flex-wrap">
-          <button id="open-create-appointment" class="btn btn-outline-dark" type="button">Create Appointment</button>
+          <a class="btn btn-outline-dark" href="/appointments/">My Appointments</a>
           <a class="btn btn-outline-dark" href="/">Back to Home</a>
           <button id="logout-btn" class="btn btn-dark" type="button">Logout</button>
         </div>
-      </section>
-
-      <section id="appointment-form-section" class="card border-0 shadow-sm p-4 mb-4 d-none">
-        <h2 class="h4 mb-3" id="appointment-form-title">Create Appointment</h2>
-        <div id="appointment-alert" class="alert d-none" role="alert"></div>
-
-        <form id="appointment-form" novalidate>
-          <input id="appointment-id" type="hidden" />
-
-          <div class="row g-3">
-            <div class="col-md-6">
-              <label class="form-label" for="appointment-date">Date</label>
-              <input id="appointment-date" class="form-control" type="date" required />
-            </div>
-            <div class="col-md-6">
-              <label class="form-label" for="appointment-time">Time</label>
-              <input id="appointment-time" class="form-control" type="time" required />
-            </div>
-
-            <div class="col-md-6">
-              <label class="form-label" for="appointment-status">Status</label>
-              <select id="appointment-status" class="form-select" required>
-                <option value="pending">Pending</option>
-                <option value="confirmed">Confirmed</option>
-                <option value="cancelled">Cancelled</option>
-                <option value="completed">Completed</option>
-              </select>
-            </div>
-
-            <div class="col-md-6">
-              <label class="form-label" for="appointment-service">Service (optional)</label>
-              <select id="appointment-service" class="form-select">
-                <option value="">None</option>
-              </select>
-            </div>
-
-            <div class="col-md-6">
-              <label class="form-label" for="appointment-staff">Staff (optional)</label>
-              <select id="appointment-staff" class="form-select">
-                <option value="">None</option>
-              </select>
-            </div>
-
-            <div class="col-12">
-              <label class="form-label" for="appointment-notes">Notes</label>
-              <textarea id="appointment-notes" class="form-control" rows="3"></textarea>
-            </div>
-          </div>
-
-          <div class="mt-3 d-flex gap-2">
-            <button id="appointment-submit" class="btn btn-dark" type="submit">Create Appointment</button>
-            <button id="appointment-cancel-edit" class="btn btn-outline-secondary d-none" type="button">
-              Cancel Edit
-            </button>
-          </div>
-        </form>
-      </section>
-
-      <section class="card border-0 shadow-sm p-4">
-        <h2 class="h4 mb-3">My Appointments</h2>
-        <div id="appointments-list" class="d-grid gap-3"></div>
       </section>
     </main>
 
