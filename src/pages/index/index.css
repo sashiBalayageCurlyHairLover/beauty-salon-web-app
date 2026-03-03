@@ -5,3 +5,42 @@ main {
 .landing-copy {
   max-width: 760px;
 }
+
+.hero-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.hero-chip {
+  background-color: var(--color-accent-soft) !important;
+  border-color: rgba(201, 169, 110, 0.45) !important;
+  color: var(--color-primary-deep) !important;
+  font-weight: 500;
+}
+
+.feature-card {
+  background-color: #fff;
+  border: 1px solid rgba(201, 169, 110, 0.25);
+  border-radius: 0.9rem;
+  box-shadow: 0 8px 20px rgba(45, 45, 45, 0.06);
+  padding: 1rem;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.feature-card:hover {
+  box-shadow: 0 12px 28px rgba(45, 45, 45, 0.1);
+  transform: translateY(-3px);
+}
+
+.feature-icon {
+  align-items: center;
+  background: linear-gradient(135deg, var(--color-primary), var(--color-primary-deep));
+  border-radius: 999px;
+  color: #fff;
+  display: inline-flex;
+  height: 2.25rem;
+  justify-content: center;
+  margin-bottom: 0.75rem;
+  width: 2.25rem;
+}

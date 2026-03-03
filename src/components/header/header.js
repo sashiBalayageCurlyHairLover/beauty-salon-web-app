@@ -3,6 +3,7 @@ import 'bootstrap-icons/font/bootstrap-icons.css';
 import 'bootstrap';
 import { getCurrentUser, getUserRole, logoutUser } from '../../services/auth.service.js';
 import headerTemplate from './header.html?raw';
+import './theme.css';
 import './header.css';
 
 const normalizePath = (pathname) => {
