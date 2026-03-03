@@ -1,0 +1,33 @@
+.attachments-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.attachment-item {
+  align-items: center;
+  display: flex;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.5rem 0;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+}
+
+.attachment-item:last-child {
+  border-bottom: 0;
+}
+
+.attachment-meta {
+  color: var(--color-muted);
+  font-size: 0.875rem;
+}
+
+.attachment-empty {
+  color: var(--color-muted);
+  margin: 0;
+}
+
+.attachment-removed {
+  opacity: 0.6;
+  text-decoration: line-through;
+}

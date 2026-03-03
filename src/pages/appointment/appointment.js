@@ -2,6 +2,7 @@ import { renderHeader } from '../../components/header/header.js';
 import { renderFooter } from '../../components/footer/footer.js';
 import { getCurrentUser } from '../../services/auth.service.js';
 import { getUserAppointmentById } from '../../services/appointments.service.js';
+import { listAppointmentAttachments } from '../../services/appointment-attachments.service.js';
 import './appointment.css';
 
 function setAlert(message, variant = 'danger') {
@@ -34,6 +35,28 @@ function renderDetail(appointment) {
   `;
 }
 
+function renderAttachments(attachments) {
+  const attachmentsElement = document.querySelector('#appointment-attachments');
+  if (!attachmentsElement) {
+    return;
+  }
+
+  if (!attachments || attachments.length === 0) {
+    attachmentsElement.innerHTML = `
+      <h2 class="h5 mb-2">Attachments</h2>
+      <p class="text-muted mb-0">No attachments.</p>
+    `;
+    return;
+  }
+
+  attachmentsElement.innerHTML = `
+    <h2 class="h5 mb-2">Attachments</h2>
+    <ul class="mb-0 ps-3">
+      ${attachments.map((item) => `<li>${item.file_name}</li>`).join('')}
+    </ul>
+  `;
+}
+
 async function initPage() {
   await renderHeader();
   await renderFooter();
@@ -61,7 +84,10 @@ async function initPage() {
   }
 
   try {
-    const appointment = await getUserAppointmentById(user.id, appointmentId);
+    const [appointment, attachments] = await Promise.all([
+      getUserAppointmentById(user.id, appointmentId),
+      listAppointmentAttachments(appointmentId)
+    ]);
 
     if (!appointment) {
       setAlert('Appointment not found.');
@@ -69,6 +95,7 @@ async function initPage() {
     }
 
     renderDetail(appointment);
+    renderAttachments(attachments);
   } catch (error) {
     setAlert(error.message || 'Unable to load appointment details.');
   }

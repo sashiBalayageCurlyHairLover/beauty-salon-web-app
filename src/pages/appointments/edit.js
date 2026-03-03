@@ -1,12 +1,12 @@
 import { renderHeader } from '../../components/header/header.js';
 import { renderFooter } from '../../components/footer/footer.js';
+import { mountAppointmentEditor } from '../../components/appointment-editor/appointment-editor.js';
 import { getCurrentUser } from '../../services/auth.service.js';
 import {
   getUserAppointmentById,
-  listServiceOptions,
-  listStaffOptions,
   updateUserAppointment
 } from '../../services/appointments.service.js';
+import { syncAppointmentAttachments } from '../../services/appointment-attachments.service.js';
 import './edit.css';
 
 let authenticatedUser = null;
@@ -22,114 +22,18 @@ function setAlert(message, variant = 'danger') {
   alertElement.textContent = message;
 }
 
-function readPayload() {
-  const date = document.querySelector('#appointment-date')?.value || '';
-  const time = document.querySelector('#appointment-time')?.value || '';
-  const status = document.querySelector('#appointment-status')?.value || 'pending';
-  const notesRaw = document.querySelector('#appointment-notes')?.value ?? '';
-  const serviceId = document.querySelector('#appointment-service')?.value || '';
-  const staffId = document.querySelector('#appointment-staff')?.value || '';
-
-  if (!date || !time) {
-    throw new Error('Please provide appointment date and time.');
-  }
-
-  return {
-    appointment_date: date,
-    appointment_time: `${time}:00`,
-    status,
-    notes: notesRaw.trim() ? notesRaw.trim() : null,
-    service_id: serviceId || null,
-    staff_id: staffId || null
-  };
-}
-
-async function hydrateOptions() {
-  const [services, staff] = await Promise.all([listServiceOptions(), listStaffOptions()]);
-
-  const serviceSelect = document.querySelector('#appointment-service');
-  const staffSelect = document.querySelector('#appointment-staff');
-
-  if (serviceSelect) {
-    serviceSelect.innerHTML =
-      '<option value="">None</option>' +
-      services.map((item) => `<option value="${item.id}">${item.name}</option>`).join('');
-  }
-
-  if (staffSelect) {
-    staffSelect.innerHTML =
-      '<option value="">None</option>' +
-      staff.map((item) => `<option value="${item.id}">${item.full_name}</option>`).join('');
-  }
-}
-
-async function hydrateCurrentAppointment() {
+async function getCurrentAppointment() {
   if (!authenticatedUser || !appointmentId) {
-    return;
+    return null;
   }
 
   const appointment = await getUserAppointmentById(authenticatedUser.id, appointmentId);
 
   if (!appointment) {
-    setAlert('Appointment not found.');
-    return;
+    throw new Error('Appointment not found.');
   }
 
-  const dateInput = document.querySelector('#appointment-date');
-  const timeInput = document.querySelector('#appointment-time');
-  const statusSelect = document.querySelector('#appointment-status');
-  const notesInput = document.querySelector('#appointment-notes');
-  const serviceSelect = document.querySelector('#appointment-service');
-  const staffSelect = document.querySelector('#appointment-staff');
-
-  if (dateInput) {
-    dateInput.value = appointment.appointment_date;
-  }
-
-  if (timeInput) {
-    timeInput.value = appointment.appointment_time.slice(0, 5);
-  }
-
-  if (statusSelect) {
-    statusSelect.value = appointment.status;
-  }
-
-  if (notesInput) {
-    notesInput.value = appointment.notes || '';
-  }
-
-  if (serviceSelect) {
-    serviceSelect.value = appointment.service_id || '';
-  }
-
-  if (staffSelect) {
-    staffSelect.value = appointment.staff_id || '';
-  }
-}
-
-function wireForm() {
-  const form = document.querySelector('#appointment-form');
-  const submitButton = document.querySelector('#appointment-submit');
-
-  form?.addEventListener('submit', async (event) => {
-    event.preventDefault();
-
-    if (!submitButton || !authenticatedUser || !appointmentId) {
-      return;
-    }
-
-    submitButton.disabled = true;
-
-    try {
-      const payload = readPayload();
-      await updateUserAppointment(authenticatedUser.id, appointmentId, payload);
-      sessionStorage.setItem('appointments-toast', 'Appointment updated successfully.');
-      window.location.href = '/appointments/';
-    } catch (error) {
-      setAlert(error.message || 'Failed to update appointment.');
-      submitButton.disabled = false;
-    }
-  });
+  return appointment;
 }
 
 async function initPage() {
@@ -158,11 +62,28 @@ async function initPage() {
     return;
   }
 
-  wireForm();
-
   try {
-    await hydrateOptions();
-    await hydrateCurrentAppointment();
+    const appointment = await getCurrentAppointment();
+
+    await mountAppointmentEditor({
+      mode: 'edit',
+      appointmentId,
+      submitLabel: 'Save Changes',
+      initialValues: appointment,
+      onSubmit: async ({ payload, newFiles, removeAttachmentIds }) => {
+        await updateUserAppointment(authenticatedUser.id, appointmentId, payload);
+
+        await syncAppointmentAttachments({
+          appointmentId,
+          userId: authenticatedUser.id,
+          newFiles,
+          removeAttachmentIds
+        });
+
+        sessionStorage.setItem('appointments-toast', 'Appointment updated successfully.');
+        window.location.href = '/appointments/';
+      }
+    });
   } catch (error) {
     setAlert(error.message || 'Unable to load appointment data.');
   }
