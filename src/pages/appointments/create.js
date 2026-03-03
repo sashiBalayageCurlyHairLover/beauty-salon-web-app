@@ -77,6 +77,7 @@ function wireForm() {
     try {
       const payload = readPayload();
       await createUserAppointment(authenticatedUser.id, payload);
+      sessionStorage.setItem('appointments-toast', 'Appointment created successfully.');
       window.location.href = '/appointments/';
     } catch (error) {
       setAlert(error.message || 'Failed to create appointment.');

@@ -6,6 +6,7 @@ import {
   deleteUserAppointment,
   listUserAppointments
 } from '../../services/appointments.service.js';
+import { showToast } from '../../components/toast/toast.js';
 import './list.css';
 
 const state = {
@@ -118,6 +119,12 @@ function wireActions() {
 async function initPage() {
   await renderHeader();
   await renderFooter();
+
+  const savedToastMessage = sessionStorage.getItem('appointments-toast');
+  if (savedToastMessage) {
+    showToast(savedToastMessage, 'success');
+    sessionStorage.removeItem('appointments-toast');
+  }
 
   try {
     const user = await getCurrentUser();

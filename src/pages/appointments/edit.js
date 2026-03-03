@@ -123,6 +123,7 @@ function wireForm() {
     try {
       const payload = readPayload();
       await updateUserAppointment(authenticatedUser.id, appointmentId, payload);
+      sessionStorage.setItem('appointments-toast', 'Appointment updated successfully.');
       window.location.href = '/appointments/';
     } catch (error) {
       setAlert(error.message || 'Failed to update appointment.');
