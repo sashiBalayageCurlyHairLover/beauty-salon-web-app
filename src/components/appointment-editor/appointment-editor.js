@@ -216,6 +216,24 @@ export async function mountAppointmentEditor(options) {
       .join('');
   };
 
+  const syncNativeFileInputSelection = () => {
+    if (!fileInput) {
+      return;
+    }
+
+    if (typeof DataTransfer === 'undefined') {
+      return;
+    }
+
+    const transfer = new DataTransfer();
+
+    newFiles.forEach((file) => {
+      transfer.items.add(file);
+    });
+
+    fileInput.files = transfer.files;
+  };
+
   const hydrateOptions = async () => {
     const [services, staff] = await Promise.all([listServiceOptions(), listStaffOptions()]);
 
@@ -303,7 +321,7 @@ export async function mountAppointmentEditor(options) {
       newFiles.push(file);
     });
 
-    fileInput.value = '';
+    syncNativeFileInputSelection();
     renderNewFiles();
   });
 
@@ -345,6 +363,7 @@ export async function mountAppointmentEditor(options) {
     }
 
     newFiles.splice(index, 1);
+    syncNativeFileInputSelection();
     renderNewFiles();
   });
 
@@ -375,6 +394,7 @@ export async function mountAppointmentEditor(options) {
     await hydrateOptions();
     applyInitialValues();
     await hydrateExistingAttachments();
+    syncNativeFileInputSelection();
     renderNewFiles();
   } catch (error) {
     setAlert(error.message || 'Unable to load appointment editor data.');
